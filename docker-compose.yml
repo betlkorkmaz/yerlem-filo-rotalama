@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-yerlem}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-yerlem}
+      POSTGRES_DB: ${POSTGRES_DB:-yerlem}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    # Backend, veritabanı bağlantı kabul etmeye başlamadan açılmasın diye sağlık kontrolü.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-yerlem}:${POSTGRES_PASSWORD:-yerlem}@db:5432/${POSTGRES_DB:-yerlem}
+      OSRM_URL: ${OSRM_URL:-https://router.project-osrm.org}
+      OSRM_TIMEOUT_MS: ${OSRM_TIMEOUT_MS:-8000}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+
+volumes:
+  db-data:
