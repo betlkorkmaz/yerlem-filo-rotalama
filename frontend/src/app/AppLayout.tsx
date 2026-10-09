@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
+import { NotificationSnackbar } from '../shared/components/NotificationSnackbar';
 
 const sections = [
   { to: '/vehicles', label: 'Filo', icon: <LocalShippingIcon /> },
@@ -79,6 +80,8 @@ export function AppLayout() {
           </BottomNavigation>
         </Paper>
       )}
+
+      <NotificationSnackbar />
     </Box>
   );
 }
