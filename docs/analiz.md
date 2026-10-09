@@ -21,6 +21,8 @@ araç bilgisini kopyalamaz; yalnızca `vehicle_id` ile araca **ilişki** kurar.
 - Plaka, karşılaştırma ve saklama için **normalize** edilir: baştaki/sondaki boşluklar atılır,
   aradaki tüm boşluklar kaldırılır, harfler büyütülür (`" 34 abc 123 "` → `34ABC123`).
   Ekranda okunabilirlik için `34 ABC 123` biçiminde gösterilir.
+- Plakalar Türkiye biçiminde doğrulanır: il kodu (01–81) + 1–3 harf + 2–4 rakam.
+- Araç kapasitesi 1–100 yolcu aralığındadır.
 - Bir rota planı en az 3 duraktan oluşur: başlangıç + en az 1 ara durak + bitiş.
 - Rota planlarının şimdilik tek durumu **taslak**tır (`draft`). Durum alanı, ileride
   "onaylandı" gibi yeni durumlar eklenebilsin diye ayrı bir kolon olarak tutulur.
