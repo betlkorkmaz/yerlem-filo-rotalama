@@ -1,4 +1,5 @@
 import { Chip } from '@mui/material';
+import { tint } from '../../../app/theme';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 
@@ -9,14 +10,14 @@ export function VehicleStatusChip({ isActive, size = 'small' }: { isActive: bool
       size={size}
       icon={<CheckCircleIcon />}
       label="Aktif"
-      sx={{ bgcolor: '#dcfce7', color: '#166534', '& .MuiChip-icon': { color: '#16a34a' } }}
+      sx={{ bgcolor: (t) => tint(t, 'success', 0.14), color: 'success.main', '& .MuiChip-icon': { color: 'inherit' } }}
     />
   ) : (
     <Chip
       size={size}
       icon={<PauseCircleIcon />}
       label="Pasif"
-      sx={{ bgcolor: '#f1f5f9', color: '#475569', '& .MuiChip-icon': { color: '#64748b' } }}
+      sx={{ bgcolor: 'action.selected', color: 'text.secondary', '& .MuiChip-icon': { color: 'inherit' } }}
     />
   );
 }

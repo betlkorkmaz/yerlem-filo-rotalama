@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Alert, AlertTitle, Box, Button, Paper, Skeleton, Stack, Typography } from '@mui/material';
+import { tint } from '../../app/theme';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 // Yükleniyor, hata ve boş durumları her ekranda aynı görünsün diye ortak bileşenler.
@@ -61,7 +62,7 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
             display: 'grid',
             placeItems: 'center',
             color: 'primary.main',
-            bgcolor: 'rgba(79,70,229,.08)',
+            bgcolor: (t) => tint(t, 'primary', 0.1),
             '& svg': { fontSize: 34 },
           }}
         >

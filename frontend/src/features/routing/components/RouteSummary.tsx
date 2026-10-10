@@ -14,7 +14,7 @@ interface RouteSummaryProps {
 
 function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <Box sx={{ flex: 1, minWidth: 0, p: { xs: 1, sm: 1.5 }, borderRadius: 2.5, bgcolor: '#f8fafc' }}>
+    <Box sx={{ flex: 1, minWidth: 0, p: { xs: 1, sm: 1.5 }, borderRadius: 2.5, bgcolor: 'action.hover' }}>
       <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', color: 'primary.main', mb: 0.5 }}>
         <Box aria-hidden sx={{ display: 'flex', '& svg': { fontSize: 18 } }}>
           {icon}

@@ -8,7 +8,8 @@ import { AppRoutes } from './app/AppRoutes';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider theme={theme}>
+    {/* Varsayılan koyu şema (kurumsal kimlik); kullanıcı üst çubuktan açığa geçebilir. */}
+    <ThemeProvider theme={theme} defaultMode="dark">
       <CssBaseline />
       <BrowserRouter>
         <AppRoutes />

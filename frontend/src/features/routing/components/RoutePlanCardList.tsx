@@ -38,14 +38,14 @@ export function RoutePlanCardList({ plans }: { plans: RoutePlanSummary[] }) {
               // Sol kenardaki renkli şerit: aracı pasif olan planlar ilk bakışta ayrılsın.
               borderLeft: '4px solid',
               borderLeftColor: plan.vehicle.isActive ? 'primary.main' : 'warning.main',
-              '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 12px 24px -12px rgba(15,23,42,.25)' },
+              '&:hover': { transform: 'translateY(-2px)', borderColor: 'primary.main', boxShadow: '0 16px 32px -16px rgba(56,189,248,.35)' },
             }}
           >
             <CardActionArea component={Link} to={`/routes/${plan.id}`} sx={{ height: '100%' }}>
               <CardContent>
                 <Stack direction="row" spacing={1} sx={{ justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
                   <Typography sx={{ fontWeight: 700, fontSize: 17 }}>{plan.name}</Typography>
-                  <Chip size="small" label="Taslak" sx={{ bgcolor: '#eef2ff', color: 'primary.dark' }} />
+                  <Chip size="small" label="Taslak" variant="outlined" color="primary" />
                 </Stack>
 
                 {/* Araç bilgisi plandan değil, araç kaydından (ilişkiden) gelir; pasifse açıkça belirtilir. */}

@@ -13,10 +13,11 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { alpha } from '@mui/material/styles';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import { NotificationSnackbar } from '../shared/components/NotificationSnackbar';
+import { brand, tint } from './theme';
+import { ThemeToggle } from './ThemeToggle';
 
 const sections = [
   { to: '/vehicles', label: 'Filo', icon: <LocalShippingIcon /> },
@@ -26,20 +27,19 @@ const sections = [
 function Brand() {
   return (
     <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', flexGrow: 1 }}>
-      <Box
-        aria-hidden
-        sx={{
-          width: 36,
-          height: 36,
-          borderRadius: 2.5,
-          display: 'grid',
-          placeItems: 'center',
-          color: '#fff',
-          background: 'linear-gradient(135deg, #4f46e5 0%, #0d9488 100%)',
-          boxShadow: '0 6px 14px -6px rgba(79,70,229,.7)',
-        }}
-      >
-        <AltRouteIcon fontSize="small" />
+      {/* Kendi işaretimiz: kurumsal kimlikteki çizgili küre fikrinden esinlenen sade bir çizim (logo kopyası değil). */}
+      <Box component="svg" viewBox="0 0 36 36" aria-hidden sx={{ width: 36, height: 36, flexShrink: 0 }}>
+        <defs>
+          {/* userSpaceOnUse: yatay çizgilerin yüksekliği 0 olduğu için geçiş tüm çizime göre hesaplanır. */}
+          <linearGradient id="brand-mark" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="36" y2="36">
+            <stop offset="0" stopColor={brand.dark.primary} />
+            <stop offset="1" stopColor={brand.light.secondary} />
+          </linearGradient>
+        </defs>
+        <circle cx="18" cy="18" r="16" fill="none" stroke="url(#brand-mark)" strokeWidth="2" />
+        {[9, 14, 19, 24, 29].map((y, i) => (
+          <line key={y} x1={8 + (i % 2) * 2} x2={28 - (i % 2) * 2} y1={y - 1} y2={y - 1} stroke="url(#brand-mark)" strokeWidth="2.2" strokeLinecap="round" />
+        ))}
       </Box>
       <Box sx={{ lineHeight: 1.1 }}>
         <Typography component="span" sx={{ fontWeight: 800, fontSize: 18, display: 'block', letterSpacing: '-0.02em' }}>
@@ -67,8 +67,8 @@ export function AppLayout() {
         elevation={0}
         color="inherit"
         sx={{
-          bgcolor: alpha('#ffffff', 0.8),
-          backdropFilter: 'blur(12px)',
+          bgcolor: (t) => t.alpha((t.vars ?? t).palette.background.default, 0.75),
+          backdropFilter: 'blur(14px)',
           borderBottom: 1,
           borderColor: 'divider',
         }}
@@ -81,7 +81,7 @@ export function AppLayout() {
               <Box
                 component="nav"
                 aria-label="Ana menü"
-                sx={{ display: 'flex', gap: 0.5, p: 0.5, borderRadius: 3, bgcolor: '#f1f5f9' }}
+                sx={{ display: 'flex', gap: 0.5 }}
               >
                 {sections.map((s) => (
                   <Button
@@ -91,13 +91,9 @@ export function AppLayout() {
                     startIcon={s.icon}
                     sx={{
                       minHeight: 40,
-                      borderRadius: 2.5,
                       color: 'text.secondary',
-                      '&.active': {
-                        color: 'primary.main',
-                        bgcolor: '#fff',
-                        boxShadow: '0 1px 3px rgba(15,23,42,.12)',
-                      },
+                      '&:hover': { color: 'text.primary', bgcolor: (t) => tint(t, 'primary', 0.06) },
+                      '&.active': { color: 'primary.main', bgcolor: (t) => tint(t, 'primary', 0.12) },
                     }}
                   >
                     {s.label}
@@ -105,6 +101,7 @@ export function AppLayout() {
                 ))}
               </Box>
             )}
+            <ThemeToggle />
           </Toolbar>
         </Container>
       </AppBar>
@@ -127,8 +124,8 @@ export function AppLayout() {
             zIndex: (t) => t.zIndex.appBar,
             borderTop: 1,
             borderColor: 'divider',
-            bgcolor: alpha('#ffffff', 0.9),
-            backdropFilter: 'blur(12px)',
+            bgcolor: (t) => t.alpha((t.vars ?? t).palette.background.default, 0.85),
+            backdropFilter: 'blur(14px)',
           }}
         >
           <BottomNavigation showLabels value={current} sx={{ bgcolor: 'transparent' }}>

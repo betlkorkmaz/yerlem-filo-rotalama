@@ -36,9 +36,9 @@ function stopIcon(label: string, color: string) {
 }
 
 function markerStyle(index: number, total: number) {
-  if (index === 0) return { label: 'B', color: '#2e7d32' }; // Başlangıç
-  if (index === total - 1) return { label: 'S', color: '#c62828' }; // Son durak
-  return { label: String(index), color: '#0d47a1' };
+  if (index === 0) return { label: 'B', color: '#16a34a' }; // Başlangıç
+  if (index === total - 1) return { label: 'S', color: '#dc2626' }; // Son durak
+  return { label: String(index), color: '#0369a1' };
 }
 
 // Duraklar değişince harita hepsini gösterecek şekilde yakınlaşır.
@@ -68,7 +68,7 @@ export function RouteMap({ stops, totalStops, geometry, onMapClick, height = { x
     <Box
       role="region"
       aria-label="Rota haritası. Duraklar listeden de eklenip düzenlenebilir."
-      sx={{ height, borderRadius: 2, overflow: 'hidden', border: 1, borderColor: 'divider', '& .leaflet-container': { height: '100%' } }}
+      sx={{ height, borderRadius: 3, overflow: 'hidden', border: 1, borderColor: 'divider', '& .leaflet-container': { height: '100%', bgcolor: '#e5e7eb' } }}
     >
       <MapContainer center={ISTANBUL} zoom={11} scrollWheelZoom={false}>
         {/* OpenStreetMap karoları ücretsizdir ve anahtar gerektirmez; atıf zorunludur. */}
@@ -78,7 +78,7 @@ export function RouteMap({ stops, totalStops, geometry, onMapClick, height = { x
         />
         <FitToStops points={points} />
         {onMapClick && <ClickToAdd onClick={onMapClick} />}
-        {line.length > 1 && <Polyline positions={line} pathOptions={{ color: '#0d47a1', weight: 5, opacity: 0.8 }} />}
+        {line.length > 1 && <Polyline positions={line} pathOptions={{ color: '#0369a1', weight: 5, opacity: 0.85 }} />}
         {stops.map((s) => {
           const { label, color } = markerStyle(s.index, totalStops);
           return (

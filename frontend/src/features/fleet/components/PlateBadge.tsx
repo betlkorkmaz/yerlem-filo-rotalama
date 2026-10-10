@@ -1,7 +1,8 @@
 import { Box } from '@mui/material';
 import { formatPlate } from '../vehicleUtils';
 
-// Türk plakası görünümü: solda mavi TR şeridi. Plaka metni gerçek metindir (ekran okuyucu okur).
+// Türk plakası görünümü: solda mavi TR şeridi. Gerçek plaka gibi görünsün diye renkleri temadan bağımsızdır.
+// Plaka metni gerçek metindir (ekran okuyucu okur).
 export function PlateBadge({ plate, size = 'medium' }: { plate: string; size?: 'small' | 'medium' | 'large' }) {
   const fontSize = { small: 13, medium: 15, large: 22 }[size];
   return (
