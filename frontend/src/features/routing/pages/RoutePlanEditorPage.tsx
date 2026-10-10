@@ -28,7 +28,14 @@ import { useRouteEditorStore } from '../store/useRouteEditorStore';
 import { RouteMap } from '../components/RouteMap';
 import { RouteSummary } from '../components/RouteSummary';
 import { StopListEditor } from '../components/StopListEditor';
-import { mappableStops, stopFieldId, toStopInput, validateCoordinates, validatePlan } from '../routeUtils';
+import {
+  mappableStops,
+  stopFieldId,
+  toStopInput,
+  validateCoordinates,
+  validatePlan,
+  type StopField,
+} from '../routeUtils';
 
 type LoadState = 'loading' | 'ready' | 'notFound' | 'error';
 
@@ -127,8 +134,10 @@ function RoutePlanEditor({ planId }: { planId: string | null }) {
   const focusField = (fieldErrors: FieldErrors) => {
     const first = Object.keys(fieldErrors)[0];
     if (!first) return;
-    const match = /^stops\.(\d+)\.(name|latitude|longitude)$/.exec(first);
-    const id = match ? stopFieldId(Number(match[1]), match[2] as 'name') : `plan-${first}`;
+    const match = /^stops\.(\d+)\.(name|latitude|longitude|location)$/.exec(first);
+    // Konum hiç seçilmemişse imleç o durağın adres arama kutusuna gider.
+    const field = match?.[2] === 'location' ? 'search' : (match?.[2] as StopField);
+    const id = match ? stopFieldId(Number(match[1]), field) : `plan-${first}`;
     document.getElementById(id)?.focus();
   };
 
@@ -149,7 +158,7 @@ function RoutePlanEditor({ planId }: { planId: string | null }) {
     const coordErrors = validateCoordinates(editor.stops);
     setErrors(coordErrors);
     if (Object.keys(coordErrors).length > 0) {
-      setCalcError('Rota hesabı için tüm durakların enlem ve boylamı geçerli olmalı.');
+      setCalcError('Rota hesabı için tüm durakların konumu seçilmiş ve geçerli olmalı.');
       focusField(coordErrors);
       return;
     }

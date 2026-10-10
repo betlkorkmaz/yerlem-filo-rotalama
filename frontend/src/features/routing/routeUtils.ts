@@ -2,7 +2,7 @@ import type { FieldErrors } from '../../api/client';
 import type { StopInput } from '../../api/routePlans';
 import type { EditorStop } from './store/useRouteEditorStore';
 
-export const MIN_STOPS = 3;
+export const MIN_STOPS = 2; // başlangıç + bitiş; ara duraklar isteğe bağlı
 export const MAX_STOPS = 25;
 
 export function formatDistance(meters: number | null): string {
@@ -19,7 +19,8 @@ export function formatDuration(seconds: number | null): string {
   return minutes % 60 ? `${hours} sa ${minutes % 60} dk` : `${hours} sa`;
 }
 
-export const stopFieldId = (index: number, field: 'name' | 'latitude' | 'longitude') => `stop-${index}-${field}`;
+export type StopField = 'search' | 'name' | 'latitude' | 'longitude';
+export const stopFieldId = (index: number, field: StopField) => `stop-${index}-${field}`;
 
 export function stopLabel(index: number, total: number): string {
   if (index === 0) return 'Başlangıç';
@@ -56,6 +57,11 @@ export function mappableStops(stops: EditorStop[]) {
 export function validateCoordinates(stops: EditorStop[]): FieldErrors {
   const errors: FieldErrors = {};
   stops.forEach((stop, i) => {
+    // Hiç konum girilmemişse "aralık dışı" demek anlamsız; kullanıcıya nasıl konum seçeceği söylenir.
+    if (!stop.latitude.trim() && !stop.longitude.trim()) {
+      errors[`stops.${i}.location`] = 'Konum seçilmedi: adres arayıp sonuçtan seçin veya haritaya dokunun.';
+      return;
+    }
     const { latitude, longitude } = toStopInput(stop);
     if (!isValidLatitude(latitude)) errors[`stops.${i}.latitude`] = 'Enlem -90 ile 90 arasında olmalı.';
     if (!isValidLongitude(longitude)) errors[`stops.${i}.longitude`] = 'Boylam -180 ile 180 arasında olmalı.';
@@ -67,7 +73,7 @@ export function validatePlan(values: { name: string; vehicleId: string; stops: E
   const errors: FieldErrors = validateCoordinates(values.stops);
   if (!values.name.trim()) errors.name = 'Plan adı zorunludur.';
   if (!values.vehicleId) errors.vehicleId = 'Araç seçin.';
-  if (values.stops.length < MIN_STOPS) errors.stops = 'Başlangıç, bitiş ve en az bir ara durak gerekli.';
+  if (values.stops.length < MIN_STOPS) errors.stops = 'Başlangıç ve bitiş durağı gerekli.';
   values.stops.forEach((stop, i) => {
     if (!stop.name.trim()) errors[`stops.${i}.name`] = 'Durak adı zorunludur.';
   });

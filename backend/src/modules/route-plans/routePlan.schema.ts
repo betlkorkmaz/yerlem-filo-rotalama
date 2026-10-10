@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-export const MIN_STOPS = 3; // başlangıç + en az 1 ara durak + bitiş
+// Başlangıç + bitiş zorunlu; ara duraklar isteğe bağlı (gerekçe: docs/analiz.md, Varsayımlar).
+export const MIN_STOPS = 2;
 export const MAX_STOPS = 25;
 
 const coordinate = (label: string, limit: number) =>
@@ -35,7 +36,7 @@ const routePlanFields = z.object({
   // Sıra bilgisi gönderilmez; listenin sırası durak sırasıdır. Backend 0..n olarak yeniden numaralar.
   stops: z
     .array(stopSchema)
-    .min(MIN_STOPS, { error: 'Başlangıç, bitiş ve en az bir ara durak gerekli.' })
+    .min(MIN_STOPS, { error: 'Başlangıç ve bitiş durağı gerekli.' })
     .max(MAX_STOPS, { error: `En fazla ${MAX_STOPS} durak eklenebilir.` }),
   // Rota hesaplanamadıysa (servis çalışmıyorsa) taslak bu alanlar olmadan da kaydedilebilir.
   distanceM: z.number().int().nonnegative().nullable().default(null),

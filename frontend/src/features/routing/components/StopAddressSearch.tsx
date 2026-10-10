@@ -17,6 +17,7 @@ import { ApiError } from '../../../api/client';
 import { searchPlaces, type Place } from '../../../api/geocoding';
 
 interface StopAddressSearchProps {
+  inputId: string;
   disabled: boolean;
   onSelect: (place: Place) => void;
 }
@@ -29,7 +30,7 @@ type SearchState =
 
 // Arama yalnızca "Ara" ya da Enter ile yapılır, her tuş vuruşunda değil: adres servisinin
 // (Nominatim) kullanım politikası yazarken otomatik aramayı yasaklıyor ve saniyede 1 istek sınırı var.
-export function StopAddressSearch({ disabled, onSelect }: StopAddressSearchProps) {
+export function StopAddressSearch({ inputId, disabled, onSelect }: StopAddressSearchProps) {
   const [query, setQuery] = useState('');
   const [state, setState] = useState<SearchState>({ status: 'idle' });
   const resultsId = useId();
@@ -43,7 +44,10 @@ export function StopAddressSearch({ disabled, onSelect }: StopAddressSearchProps
     }
     setState({ status: 'loading' });
     try {
-      setState({ status: 'done', places: await searchPlaces(text) });
+      const places = await searchPlaces(text);
+      // Tek sonuç varsa seçim beklemeden durağa yazılır; kullanıcı sonuca tıklamayı unutmasın.
+      if (places.length === 1) choose(places[0]);
+      else setState({ status: 'done', places });
     } catch (err) {
       setState({ status: 'error', message: err instanceof ApiError ? err.message : 'Adres aranamadı.' });
     }
@@ -58,6 +62,7 @@ export function StopAddressSearch({ disabled, onSelect }: StopAddressSearchProps
   return (
     <Box>
       <TextField
+        id={inputId}
         label="Adres ara"
         placeholder="ör. Kadıköy İskele"
         size="small"
@@ -100,6 +105,9 @@ export function StopAddressSearch({ disabled, onSelect }: StopAddressSearchProps
         )}
         {state.status === 'done' && state.places.length > 0 && (
           <Paper variant="outlined" sx={{ mt: 1 }}>
+            <Typography variant="body2" sx={{ px: 2, pt: 1, fontWeight: 600 }}>
+              Doğru yeri seçin:
+            </Typography>
             <List dense disablePadding aria-label="Adres sonuçları">
               {state.places.map((p) => (
                 <ListItemButton key={`${p.latitude},${p.longitude}`} onClick={() => choose(p)}>

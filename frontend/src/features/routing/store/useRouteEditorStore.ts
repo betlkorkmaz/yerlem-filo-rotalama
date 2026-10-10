@@ -68,14 +68,14 @@ export const useRouteEditorStore = create<RouteEditorState>((set) => ({
   route: null,
   dirty: false,
 
-  // Başlangıç, bir ara durak ve bitiş için üç boş satırla açılır.
+  // Başlangıç ve bitiş için iki boş satırla açılır; ara duraklar isteğe bağlı eklenir.
   startNew: () =>
     set({
       planId: null,
       clientRequestId: newKey(),
       name: '',
       vehicleId: '',
-      stops: [emptyStop(), emptyStop(), emptyStop()],
+      stops: [emptyStop(), emptyStop()],
       route: null,
       dirty: false,
     }),

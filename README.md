@@ -192,6 +192,8 @@ npm run dev           # http://localhost:5173 (/api istekleri backend'e yönlend
 
 - **Konum belirleme:** Kullanıcının koordinat bilmesi beklenmez. Her durak için **adres aranabilir**
   (seçilen sonuç adı ve koordinatı doldurur), **haritaya dokunulabilir** ya da enlem/boylam elle girilebilir.
+- **Ara duraklar isteğe bağlıdır:** Plan en az başlangıç ve bitişten oluşur; "Ara durak ekle" ile
+  istenen sayıda (en fazla 25 durağa kadar) ara durak eklenir. Gerekçe: [docs/analiz.md](docs/analiz.md#2-varsayımlar).
 - **Durak sırası:** Listenin ilki başlangıç, sonuncusu bitiştir. Sıralama yukarı/aşağı butonlarıyla
   yapılır (klavye ve dokunmatikte güvenilir). Kayıtta duraklar 0..n olarak yeniden numaralanır.
 - **Rota hesabı ve kayıt ayrıdır:** "Rotayı hesapla" OSRM'den mesafe, süre ve çizgiyi alır;

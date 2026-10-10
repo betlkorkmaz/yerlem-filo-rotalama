@@ -39,8 +39,9 @@ function throttled<T>(task: () => Promise<T>): Promise<T> {
   return run;
 }
 
+// OSM verisinde semt alanına bazen sayı girilmiş olabiliyor ("41"); anlamlı ilk ad seçilir.
 const district = (a: Record<string, string> = {}) =>
-  a.city_district ?? a.town ?? a.county ?? a.suburb ?? a.city;
+  [a.city_district, a.town, a.county, a.suburb, a.city].find((v) => v && !/^\d+$/.test(v));
 
 function toPlace(item: NominatimItem): Place | null {
   const latitude = Number(item.lat);

@@ -42,7 +42,9 @@ export function StopListEditor({
       {stops.map((stop, i) => {
         const label = stopLabel(i, stops.length);
         const err = (field: string) => errors[`stops.${i}.${field}`];
-        const hasError = highlightIndex === i || Boolean(err('name') || err('latitude') || err('longitude'));
+        const locationError = err('location');
+        const hasError =
+          highlightIndex === i || Boolean(locationError || err('name') || err('latitude') || err('longitude'));
 
         return (
           <Paper
@@ -88,7 +90,16 @@ export function StopListEditor({
             </Stack>
 
             <Stack spacing={1.5}>
-              <StopAddressSearch disabled={disabled} onSelect={(place) => onSelectPlace(stop.key, place)} />
+              <StopAddressSearch
+                inputId={stopFieldId(i, 'search')}
+                disabled={disabled}
+                onSelect={(place) => onSelectPlace(stop.key, place)}
+              />
+              {locationError && (
+                <Typography color="error" variant="body2" role="alert">
+                  {locationError}
+                </Typography>
+              )}
               <TextField
                 id={stopFieldId(i, 'name')}
                 label="Durak adı"
@@ -111,7 +122,7 @@ export function StopListEditor({
                     size="small"
                     value={stop[field]}
                     onChange={(e) => onChange(stop.key, { [field]: e.target.value })}
-                    error={Boolean(err(field))}
+                    error={Boolean(err(field) || locationError)}
                     helperText={err(field)}
                     disabled={disabled}
                     fullWidth

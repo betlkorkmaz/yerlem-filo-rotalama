@@ -23,7 +23,13 @@ araç bilgisini kopyalamaz; yalnızca `vehicle_id` ile araca **ilişki** kurar.
   Ekranda okunabilirlik için `34 ABC 123` biçiminde gösterilir.
 - Plakalar Türkiye biçiminde doğrulanır: il kodu (01–81) + 1–3 harf + 2–4 rakam.
 - Araç kapasitesi 1–100 yolcu aralığındadır.
-- Bir rota planı en az 3 duraktan oluşur: başlangıç + en az 1 ara durak + bitiş.
+- Bir rota planında **başlangıç ve bitiş zorunlu, ara duraklar isteğe bağlıdır** (en az 2 durak).
+  Gereksinimdeki "başlangıç, bitiş ve en az bir ara durak ekleyebilmelidir" ifadesi, kullanıcının ara
+  durak **ekleyebilmesi** olarak yorumlandı: arayüz istenen sayıda ara durak eklemeye izin verir, ancak
+  doğrudan A→B servisleri de olabileceği için her plana ara durak zorunlu tutulmadı. Kural tek bir
+  sabitle (`MIN_STOPS`) yönetildiği için gerekirse 3'e çekmek tek satırlık değişikliktir.
+- Kullanıcının koordinat bilmesi beklenmez: durak konumu adres aramasıyla, haritaya dokunarak veya
+  elle girilerek belirlenir. Veride her durağın enlem ve boylamı zorunludur.
 - Rota planlarının şimdilik tek durumu **taslak**tır (`draft`). Durum alanı, ileride
   "onaylandı" gibi yeni durumlar eklenebilsin diye ayrı bir kolon olarak tutulur.
 - Mesafe ve süre, OSRM'in (ücretsiz, anahtar gerektirmeyen OpenStreetMap tabanlı rota servisi)
