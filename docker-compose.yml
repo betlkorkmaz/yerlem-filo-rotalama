@@ -30,11 +30,19 @@ services:
         condition: service_healthy
     ports:
       - "${BACKEND_PORT:-3000}:3000"
+    # Migration ve seed bitip API dinlemeye başlayınca "sağlıklı" sayılır.
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
 
   frontend:
     build: ./frontend
+    # Arayüz, API hazır olmadan açılırsa ilk istekler hata verir; bu yüzden backend'in sağlıklı olması beklenir.
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "${FRONTEND_PORT:-8080}:80"
 
