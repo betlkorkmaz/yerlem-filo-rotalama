@@ -23,6 +23,7 @@ import { useVehicleStore } from '../store/useVehicleStore';
 import { useVehicle } from '../hooks/useVehicle';
 import { VehicleStatusChip } from '../components/VehicleStatusChip';
 import { formatDateTime, formatPlate, vehicleTypeLabels } from '../vehicleUtils';
+import { VehicleRoutePlans } from '../../routing/components/VehicleRoutePlans';
 
 export function VehicleDetailPage() {
   const { id = '' } = useParams();
@@ -142,6 +143,8 @@ function VehicleDetail({ id }: { id: string }) {
           ))}
         </Box>
       </Paper>
+
+      <VehicleRoutePlans vehicleId={vehicle.id} />
 
       <Dialog open={confirmOpen} onClose={() => !toggling && setConfirmOpen(false)}>
         <DialogTitle>Araç pasif yapılsın mı?</DialogTitle>
