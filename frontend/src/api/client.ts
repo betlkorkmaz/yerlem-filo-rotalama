@@ -11,6 +11,8 @@ export class ApiError extends Error {
     public readonly code: string,
     message: string,
     public readonly fieldErrors: FieldErrors = {},
+    // Backend'in ham ek bilgisi (ör. rota servisinin hangi durakta sorun bulduğu: { stopIndex }).
+    public readonly details?: unknown,
   ) {
     super(message);
     this.name = 'ApiError';
@@ -91,6 +93,7 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
       error?.code ?? `HTTP_${response.status}`,
       error?.message ?? fallbackMessages[response.status] ?? 'İşlem tamamlanamadı.',
       toFieldErrors(error),
+      error?.details,
     );
   }
 
