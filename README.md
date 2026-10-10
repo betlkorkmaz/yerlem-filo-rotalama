@@ -18,8 +18,8 @@ hazırlandığı web uygulaması. 360 px telefon ekranından masaüstüne kadar 
 | Filo API'si (listeleme, arama, ekleme, düzenleme, aktif/pasif) | ✅ Tamamlandı |
 | Filo ekranları (liste, form, detay; mobil kart görünümü) | ✅ Tamamlandı |
 | Backend iş kuralı testleri (plaka normalizasyonu, doğrulama) | ✅ Tamamlandı |
-| Rota planı API'si ve OSRM entegrasyonu | 🔄 Devam ediyor |
-| Rota ekranları (liste, oluşturma, harita) | 🔄 Devam ediyor |
+| Rota planı API'si ve OSRM entegrasyonu | ✅ Tamamlandı |
+| Rota ekranları (liste, oluşturma/düzenleme, harita) | ✅ Tamamlandı |
 | Entegrasyon testleri ve frontend kullanıcı akışı testi | ⏳ Planlandı |
 | OpenAPI (Swagger) dokümanı | ⏳ Planlandı |
 
@@ -96,7 +96,8 @@ frontend/src/
 |---|---|
 | `useVehicleStore` | Sunucudan gelen araç listesi (filonun istemcideki tek kopyası) |
 | `useNotificationStore` | Kısa arayüz bildirimleri |
-| `useRouteEditorStore` *(geliştiriliyor)* | Düzenlenen, henüz kaydedilmemiş rota planı |
+| `useRoutePlanStore` | Kayıtlı rota planlarının özet listesi |
+| `useRouteEditorStore` | Düzenlenen, henüz kaydedilmemiş plan: duraklar, seçili `vehicleId`, hesaplanan rota |
 
 Liste filtreleri store yerine adres çubuğunda (`?q=&status=`) tutulur; form değerleri ilgili bileşende kalır.
 
@@ -111,9 +112,13 @@ Liste filtreleri store yerine adres çubuğunda (`?q=&status=`) tutulur; form de
 | GET | `/api/vehicles/:id` | Araç detayı | 200 | 400, 404 |
 | POST | `/api/vehicles` | Araç ekleme | 201 | 400, 409 |
 | PATCH | `/api/vehicles/:id` | Düzenleme / aktif-pasif | 200 | 400, 404, 409 |
+| GET | `/api/route-plans?vehicleId=` | Plan listesi (durak sayısı, aracın güncel bilgisi) | 200 | 400 |
+| GET | `/api/route-plans/:id` | Plan + sıralı duraklar + rota çizgisi | 200 | 400, 404 |
+| POST | `/api/route-plans` | Taslak plan oluşturma | 201 (tekrar isteğinde 200) | 400, 409 |
+| PUT | `/api/route-plans/:id` | Taslak planı güncelleme | 200 | 400, 404, 409 |
+| POST | `/api/routing/calculate` | OSRM ile rota hesabı (kaydetmez) | 200 | 400, 422, 502, 504 |
 
 Araçlar için silme ucu bilerek yoktur; geçmiş planları korumak için araçlar pasif yapılır.
-Rota planı uçları geliştirme aşamasındadır ([docs/analiz.md](docs/analiz.md#4-api-taslağı)).
 
 <details>
 <summary>Örnek istek ve hata cevabı</summary>
@@ -169,10 +174,32 @@ npm run dev           # http://localhost:5173 (/api istekleri backend'e yönlend
 - Filo yüzlerce araç mertebesindedir; araç listesi bir kez çekilip istemcide filtrelenir.
   Daha büyük filolar için backend'deki `search` ve `status` parametreleri hazırdır.
 
+## 🗺️ Rota Planlama Davranışı
+
+- **Durak sırası:** Listenin ilki başlangıç, sonuncusu bitiştir. Sıralama yukarı/aşağı butonlarıyla
+  yapılır (klavye ve dokunmatikte güvenilir). Kayıtta duraklar 0..n olarak yeniden numaralanır.
+- **Rota hesabı ve kayıt ayrıdır:** "Rotayı hesapla" OSRM'den mesafe, süre ve çizgiyi alır;
+  "Kaydet" planı bu sonuçla birlikte saklar. Rota servisi çalışmasa da plan rotasız taslak olarak
+  kaydedilebilir. Duraklar değişince eski rota otomatik silinir, böylece yanlış rota kaydedilmez.
+- **Pasif araç:** Yeni planda seçilemez. Ekran açıkken araç başka yerde pasif yapılırsa kayıt `409`
+  ile reddedilir (kontrol, transaction içinde araç satırı `FOR SHARE` ile kilitlenerek yapılır);
+  girilen duraklar kaybolmaz.
+- **Geçmiş kayıtların sunumu:** Plan aracı kopyalamaz; liste ve detayda aracın **güncel** bilgisi
+  ilişkiden okunur. Araç pasif yapılırsa planlar silinmez, "Araç pasif" etiketiyle görünmeye devam
+  eder ve araç detay sayfasında listelenir.
+- **Çift kayıt:** Kaydet butonu istek sürerken kilitlenir; ayrıca her yeni plan ekranı bir
+  `clientRequestId` üretir ve aynı istek tekrar gelirse sunucu yeni kayıt açmaz.
+- **Rota servisi hataları:** Zaman aşımı (504), ulaşılamama/bozuk cevap (502), rota bulunamaması veya
+  durağın karayoluna çok uzak olması (422) ayrı mesajlarla gösterilir.
+
 ## ⚠️ Bilinen Eksikler
 
-- Rota planlama bölümü geliştirme aşamasındadır (bkz. Geliştirme Durumu).
-- Aynı aracı iki kişi aynı anda düzenlerse son kaydeden kazanır (optimistic locking yok).
+- Rota servisi olarak OSRM'in herkese açık **demo sunucusu** kullanılır; yoğunlukta yavaşlayabilir
+  ve kullanım sınırı vardır. Üretimde kendi OSRM sunucusu kurulup `OSRM_URL` ile gösterilmelidir.
+- Kaydedilen mesafe/süre istemcinin hesapladığı rotadan gelir; backend kayıtta rotayı yeniden
+  hesaplayıp doğrulamaz (kaydın rota servisine bağımlı olmaması için).
+- Aynı aracı veya planı iki kişi aynı anda düzenlerse son kaydeden kazanır (optimistic locking yok).
+- Rota planları silinemez; yalnızca düzenlenebilir.
 
 ---
 
