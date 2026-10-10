@@ -20,8 +20,11 @@ hazırlandığı web uygulaması. 360 px telefon ekranından masaüstüne kadar 
 | Backend iş kuralı testleri (plaka normalizasyonu, doğrulama) | ✅ Tamamlandı |
 | Rota planı API'si ve OSRM entegrasyonu | ✅ Tamamlandı |
 | Rota ekranları (liste, oluşturma/düzenleme, harita) | ✅ Tamamlandı |
-| Entegrasyon testleri ve frontend kullanıcı akışı testi | ⏳ Planlandı |
-| OpenAPI (Swagger) dokümanı | ⏳ Planlandı |
+| Backend entegrasyon testleri (gerçek PostgreSQL) ve rota servisi testleri | ✅ Tamamlandı |
+| Frontend kullanıcı akışı testi ve düzenleyici kuralları testleri | ✅ Tamamlandı |
+| OpenAPI (Swagger) dokümanı | ✅ Tamamlandı |
+| Açık / koyu tema | ✅ Tamamlandı |
+| Mobil ve masaüstü ekran görüntüleri | ⏳ Hazırlanıyor |
 
 ---
 
@@ -41,6 +44,7 @@ veya `.env` dosyası gerekmez.
 | Adres | Açıklama |
 |---|---|
 | http://localhost:8080 | Uygulama |
+| http://localhost:8080/api/docs | **API dokümanı (Swagger)**: uçlar tarayıcıdan denenebilir |
 | http://localhost:8080/api/health | Servis ve veritabanı durumu |
 | http://localhost:3000/api | Backend (doğrudan erişim) |
 
@@ -118,6 +122,9 @@ Liste filtreleri store yerine adres çubuğunda (`?q=&status=`) tutulur; form de
 
 ## 🔌 API
 
+Ayrıntılı sözleşme (istek/cevap şemaları, hata kodları): **http://localhost:8080/api/docs** ·
+ham OpenAPI 3.1: `/api/openapi.json` · kaynak: [backend/src/docs/openapi.ts](backend/src/docs/openapi.ts)
+
 | Metot | Uç | Açıklama | Başarılı | Hatalar |
 |---|---|---|---|---|
 | GET | `/api/health` | Servis durumu | 200 | 503 |
@@ -176,6 +183,26 @@ npm run dev           # http://localhost:5173 (/api istekleri backend'e yönlend
 | Lint | `npm run lint` | `npm run lint` |
 | Tip kontrolü | `npm run typecheck` | `npm run typecheck` |
 | Test | `npm test` | `npm test` |
+
+## 🧪 Testler
+
+```bash
+docker compose up -d db          # entegrasyon testleri için PostgreSQL
+cd backend && npm install && npm test
+cd frontend && npm install && npm test
+```
+
+Backend entegrasyon testleri ayrı bir `yerlem_test` veritabanı oluşturup uygulamanın kendi
+migration'larıyla kurar; geliştirme verisine dokunmaz. PostgreSQL'e ulaşılamazsa bu testler hata
+vermek yerine **atlanır**, veritabanı gerektirmeyen testler yine çalışır.
+
+| Katman | Dosya | Sınanan davranış |
+|---|---|---|
+| Backend · iş kuralı | `tests/vehicle.schema.test.ts` | Plaka normalizasyonu, alan doğrulamaları, düzenlemede aktiflik korunur |
+| Backend · entegrasyon | `tests/api.integration.test.ts` | Aynı plakanın farklı yazımı (409), eşzamanlı aynı plaka, pasif araçla plan (409), rota açıkken aracın pasifleşmesi, `clientRequestId` ile çift kayıt koruması (5 paralel istek → 1 plan), durak silme/sıralama sonrası sequence, `ON DELETE RESTRICT` |
+| Backend · dış servis | `tests/osrm.service.test.ts` | Rota servisi zaman aşımı (504), ulaşılamama/bozuk cevap (502), rota yok ve yola uzak durak (422) |
+| Frontend · kullanıcı akışı | `src/features/fleet/pages/VehicleCreatePage.test.tsx` | Boş form → alanla ilişkili hata mesajları; sunucu 409 → mesaj plaka alanında; başarılı kayıt → doğru istek ve yönlendirme; çift tıklamada tek istek |
+| Frontend · durum kuralları | `src/features/routing/routeEditor.test.ts` | Ara durak bitişten önce eklenir, durak değişince eski rota silinir, konum doğrulama mesajları |
 
 ---
 

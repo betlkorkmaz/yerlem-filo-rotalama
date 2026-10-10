@@ -121,7 +121,10 @@ erDiagram
 | GET | `/api/route-plans/:id` | Plan detayı + duraklar | 200 | 404 |
 | POST | `/api/route-plans` | Taslak plan oluşturma | 201 | 400, 409 |
 | PUT | `/api/route-plans/:id` | Taslak planı güncelleme | 200 | 400, 404, 409 |
-| POST | `/api/routing/calculate` | Duraklar için OSRM üzerinden rota hesabı | 200 | 400, 502, 504 |
+| POST | `/api/routing/calculate` | Duraklar için OSRM üzerinden rota hesabı | 200 | 400, 422, 502, 504 |
+| GET | `/api/geocoding/search?q=` | Adresten konum arama (Nominatim) | 200 | 400, 502, 503, 504 |
+
+Güncel ve ayrıntılı sözleşme: uygulama çalışırken `/api/docs` (Swagger arayüzü) ve `/api/openapi.json`.
 
 Tüm hata cevapları aynı biçimdedir:
 
