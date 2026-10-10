@@ -7,6 +7,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-yerlem}
     volumes:
       - db-data:/var/lib/postgresql/data
+    # Yerel geliştirmede (npm run dev) backend'in veritabanına bağlanabilmesi için.
+    ports:
+      - "${DB_PORT:-5432}:5432"
     # Backend, veritabanı bağlantı kabul etmeye başlamadan açılmasın diye sağlık kontrolü.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
