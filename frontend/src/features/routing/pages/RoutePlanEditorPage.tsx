@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import RouteIcon from '@mui/icons-material/Route';
 import SaveIcon from '@mui/icons-material/Save';
+import PlaceIcon from '@mui/icons-material/Place';
 import { useShallow } from 'zustand/react/shallow';
 import { ApiError, type FieldErrors } from '../../../api/client';
 import * as routePlansApi from '../../../api/routePlans';
@@ -338,7 +339,7 @@ function RoutePlanEditor({ planId }: { planId: string | null }) {
             onMapClick={saving ? undefined : handleMapClick}
           />
           <Typography variant="body2" color="text.secondary">
-            Haritaya dokunarak durak ekleyebilir, koordinatları listeden de girebilirsiniz.
+            Haritaya dokunduğunuzda konumu boş olan ilk durak doldurulur; hepsi doluysa bitişten önce yeni durak eklenir.
           </Typography>
         </Stack>
 
@@ -346,6 +347,11 @@ function RoutePlanEditor({ planId }: { planId: string | null }) {
           <Typography variant="h6" component="h2" sx={{ mb: 1.5 }}>
             Duraklar
           </Typography>
+          {/* Kullanıcının koordinat bilmesi beklenmez; koordinat alanları en son seçenektir. */}
+          <Alert severity="info" icon={<PlaceIcon />} sx={{ mb: 2 }}>
+            Durakların konumunu üç yoldan belirleyebilirsiniz: <strong>adres arayın</strong>,{' '}
+            <strong>haritaya dokunun</strong> ya da enlem/boylamı elle girin.
+          </Alert>
           <StopListEditor
             stops={editor.stops}
             errors={errors}
@@ -364,6 +370,14 @@ function RoutePlanEditor({ planId }: { planId: string | null }) {
               clearStopErrors();
             }}
             onAdd={() => actions.addStop()}
+            onSelectPlace={(key, place) => {
+              actions.updateStop(key, {
+                name: place.name,
+                latitude: place.latitude.toFixed(6),
+                longitude: place.longitude.toFixed(6),
+              });
+              clearStopErrors();
+            }}
           />
         </Paper>
       </Box>

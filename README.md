@@ -56,6 +56,19 @@ Portları veya veritabanı bilgilerini değiştirmek için `.env.example` dosyas
 
 ---
 
+## 🌐 Kullanılan Dış Servisler
+
+Hiçbiri API anahtarı gerektirmez; adresleri ortam değişkenleriyle değiştirilebilir.
+
+| Servis | Kullanım | Ortam değişkeni |
+|---|---|---|
+| OpenStreetMap karoları | Harita görüntüsü (Leaflet) | — |
+| OSRM | Rota mesafesi, süresi ve çizgisi | `OSRM_URL` |
+| Nominatim | Adresten konum bulma | `NOMINATIM_URL` |
+
+Rota ve adres servislerine tarayıcıdan değil backend'den gidilir: zaman aşımı ve hata dönüşümü
+tek yerde yönetilir, ileride anahtarlı bir servise geçilirse anahtar tarayıcıya sızmaz.
+
 ## 🧱 Mimari
 
 ```
@@ -117,6 +130,7 @@ Liste filtreleri store yerine adres çubuğunda (`?q=&status=`) tutulur; form de
 | POST | `/api/route-plans` | Taslak plan oluşturma | 201 (tekrar isteğinde 200) | 400, 409 |
 | PUT | `/api/route-plans/:id` | Taslak planı güncelleme | 200 | 400, 404, 409 |
 | POST | `/api/routing/calculate` | OSRM ile rota hesabı (kaydetmez) | 200 | 400, 422, 502, 504 |
+| GET | `/api/geocoding/search?q=` | Adresten konum arama (Nominatim) | 200 | 400, 502, 503, 504 |
 
 Araçlar için silme ucu bilerek yoktur; geçmiş planları korumak için araçlar pasif yapılır.
 
@@ -176,6 +190,8 @@ npm run dev           # http://localhost:5173 (/api istekleri backend'e yönlend
 
 ## 🗺️ Rota Planlama Davranışı
 
+- **Konum belirleme:** Kullanıcının koordinat bilmesi beklenmez. Her durak için **adres aranabilir**
+  (seçilen sonuç adı ve koordinatı doldurur), **haritaya dokunulabilir** ya da enlem/boylam elle girilebilir.
 - **Durak sırası:** Listenin ilki başlangıç, sonuncusu bitiştir. Sıralama yukarı/aşağı butonlarıyla
   yapılır (klavye ve dokunmatikte güvenilir). Kayıtta duraklar 0..n olarak yeniden numaralanır.
 - **Rota hesabı ve kayıt ayrıdır:** "Rotayı hesapla" OSRM'den mesafe, süre ve çizgiyi alır;
@@ -200,6 +216,10 @@ npm run dev           # http://localhost:5173 (/api istekleri backend'e yönlend
   hesaplayıp doğrulamaz (kaydın rota servisine bağımlı olmaması için).
 - Aynı aracı veya planı iki kişi aynı anda düzenlerse son kaydeden kazanır (optimistic locking yok).
 - Rota planları silinemez; yalnızca düzenlenebilir.
+- Adres arama için OpenStreetMap **Nominatim**'in herkese açık sunucusu kullanılır. Kullanım
+  politikası gereği arama yazarken otomatik yapılmaz ("Ara" / Enter ile yapılır), backend istekleri
+  saniyede en fazla 1 olacak şekilde sıraya alır ve sonuçları 1 saat önbellekte tutar. Arama Türkiye
+  ile sınırlıdır (`GEOCODING_COUNTRY_CODES`).
 
 ---
 

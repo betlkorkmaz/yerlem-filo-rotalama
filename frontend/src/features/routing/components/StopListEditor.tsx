@@ -4,7 +4,9 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import type { FieldErrors } from '../../../api/client';
+import type { Place } from '../../../api/geocoding';
 import type { EditorStop } from '../store/useRouteEditorStore';
+import { StopAddressSearch } from './StopAddressSearch';
 import { MAX_STOPS, MIN_STOPS, stopFieldId, stopLabel } from '../routeUtils';
 
 interface StopListEditorProps {
@@ -16,11 +18,22 @@ interface StopListEditorProps {
   onMove: (key: string, direction: -1 | 1) => void;
   onRemove: (key: string) => void;
   onAdd: () => void;
+  onSelectPlace: (key: string, place: Place) => void;
 }
 
 // Sıralama sürükle-bırak yerine yukarı/aşağı butonlarıyla yapılır: klavye ve ekran okuyucuyla
 // da kullanılabilir, küçük ekranda yanlışlıkla sürükleme olmaz.
-export function StopListEditor({ stops, errors, highlightIndex, disabled, onChange, onMove, onRemove, onAdd }: StopListEditorProps) {
+export function StopListEditor({
+  stops,
+  errors,
+  highlightIndex,
+  disabled,
+  onChange,
+  onMove,
+  onRemove,
+  onAdd,
+  onSelectPlace,
+}: StopListEditorProps) {
   const canRemove = stops.length > MIN_STOPS;
 
   return (
@@ -75,6 +88,7 @@ export function StopListEditor({ stops, errors, highlightIndex, disabled, onChan
             </Stack>
 
             <Stack spacing={1.5}>
+              <StopAddressSearch disabled={disabled} onSelect={(place) => onSelectPlace(stop.key, place)} />
               <TextField
                 id={stopFieldId(i, 'name')}
                 label="Durak adı"
@@ -94,7 +108,6 @@ export function StopListEditor({ stops, errors, highlightIndex, disabled, onChan
                     key={field}
                     id={stopFieldId(i, field)}
                     label={field === 'latitude' ? 'Enlem' : 'Boylam'}
-                    placeholder={field === 'latitude' ? '41.0151' : '28.9795'}
                     size="small"
                     value={stop[field]}
                     onChange={(e) => onChange(stop.key, { [field]: e.target.value })}
