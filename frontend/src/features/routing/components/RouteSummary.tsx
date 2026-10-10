@@ -14,17 +14,19 @@ interface RouteSummaryProps {
 
 function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <Stack direction="row" spacing={1} sx={{ alignItems: 'center', flex: 1, minWidth: 0 }}>
-      <Box sx={{ color: 'primary.main', display: 'flex' }} aria-hidden>
-        {icon}
-      </Box>
-      <Box sx={{ minWidth: 0 }}>
-        <Typography variant="caption" color="text.secondary" component="div">
+    <Box sx={{ flex: 1, minWidth: 0, p: { xs: 1, sm: 1.5 }, borderRadius: 2.5, bgcolor: '#f8fafc' }}>
+      <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', color: 'primary.main', mb: 0.5 }}>
+        <Box aria-hidden sx={{ display: 'flex', '& svg': { fontSize: 18 } }}>
+          {icon}
+        </Box>
+        <Typography variant="caption" color="text.secondary" noWrap>
           {label}
         </Typography>
-        <Typography sx={{ fontWeight: 700 }}>{value}</Typography>
-      </Box>
-    </Stack>
+      </Stack>
+      <Typography sx={{ fontWeight: 800, fontSize: { xs: 18, sm: 22 }, letterSpacing: '-0.02em' }} noWrap>
+        {value}
+      </Typography>
+    </Box>
   );
 }
 
@@ -32,9 +34,9 @@ export function RouteSummary({ route, stopCount, calculating, error }: RouteSumm
   return (
     <Paper variant="outlined" sx={{ p: 2 }}>
       {/* Hesaplama sonucu değiştiğinde ekran okuyucu yeni değerleri okur. */}
-      <Stack direction="row" spacing={2} aria-live="polite" aria-busy={calculating}>
-        <Metric icon={<StraightenIcon />} label="Toplam mesafe" value={calculating ? '…' : formatDistance(route?.distanceM ?? null)} />
-        <Metric icon={<ScheduleIcon />} label="Tahmini süre" value={calculating ? '…' : formatDuration(route?.durationS ?? null)} />
+      <Stack direction="row" spacing={1} aria-live="polite" aria-busy={calculating}>
+        <Metric icon={<StraightenIcon />} label="Mesafe" value={calculating ? '…' : formatDistance(route?.distanceM ?? null)} />
+        <Metric icon={<ScheduleIcon />} label="Süre" value={calculating ? '…' : formatDuration(route?.durationS ?? null)} />
         <Metric icon={<PlaceIcon />} label="Durak" value={String(stopCount)} />
       </Stack>
 

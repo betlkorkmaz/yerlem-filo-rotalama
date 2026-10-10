@@ -25,13 +25,16 @@ export function PageHeader({ title, subtitle, backTo, actions }: PageHeaderProps
         sx={{ justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' } }}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h5" component="h1" sx={{ fontWeight: 700 }}>
+          <Typography variant="h5" component="h1">
             {title}
           </Typography>
-          {subtitle && (
+          {/* Metin değilse (ör. rozet ve etiket) <p> içine konmaz; geçersiz HTML iç içeliği olmasın. */}
+          {typeof subtitle === 'string' ? (
             <Typography color="text.secondary" sx={{ mt: 0.5 }}>
               {subtitle}
             </Typography>
+          ) : (
+            subtitle && <Box sx={{ mt: 1 }}>{subtitle}</Box>
           )}
         </Box>
         {actions && (

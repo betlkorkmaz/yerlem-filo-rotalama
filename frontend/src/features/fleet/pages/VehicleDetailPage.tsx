@@ -10,6 +10,7 @@ import {
   DialogContentText,
   DialogTitle,
   Paper,
+  Stack,
   Typography,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -22,6 +23,7 @@ import { useNotificationStore } from '../../../shared/store/useNotificationStore
 import { useVehicleStore } from '../store/useVehicleStore';
 import { useVehicle } from '../hooks/useVehicle';
 import { VehicleStatusChip } from '../components/VehicleStatusChip';
+import { PlateBadge } from '../components/PlateBadge';
 import { formatDateTime, formatPlate, vehicleTypeLabels } from '../vehicleUtils';
 import { VehicleRoutePlans } from '../../routing/components/VehicleRoutePlans';
 
@@ -89,8 +91,13 @@ function VehicleDetail({ id }: { id: string }) {
   return (
     <>
       <PageHeader
-        title={formatPlate(vehicle.plate)}
-        subtitle={<VehicleStatusChip isActive={vehicle.isActive} size="medium" />}
+        title={vehicle.name}
+        subtitle={
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', flexWrap: 'wrap', rowGap: 1 }}>
+            <PlateBadge plate={vehicle.plate} size="large" />
+            <VehicleStatusChip isActive={vehicle.isActive} size="medium" />
+          </Stack>
+        }
         backTo={backTo}
         actions={
           <>

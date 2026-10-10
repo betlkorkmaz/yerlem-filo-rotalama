@@ -12,6 +12,7 @@ import { filterVehicles, type StatusFilter } from '../vehicleUtils';
 import { VehicleFilters } from '../components/VehicleFilters';
 import { VehicleTable } from '../components/VehicleTable';
 import { VehicleCardList } from '../components/VehicleCardList';
+import { FleetStats } from '../components/FleetStats';
 
 const STATUS_VALUES: StatusFilter[] = ['all', 'active', 'inactive'];
 
@@ -106,6 +107,8 @@ export function VehicleListPage() {
   return (
     <>
       <PageHeader title="Araçlar" subtitle="Filo ve rotalama aynı araç listesini kullanır." actions={newVehicleButton} />
+
+      {vehicles.length > 0 && <FleetStats vehicles={vehicles} />}
 
       <VehicleFilters
         search={search}

@@ -48,13 +48,31 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
-    <Paper variant="outlined" sx={{ py: 6, px: 3, textAlign: 'center' }}>
-      {icon && <Box sx={{ color: 'text.secondary', mb: 1, '& svg': { fontSize: 48 } }}>{icon}</Box>}
+    <Paper variant="outlined" sx={{ py: { xs: 5, sm: 7 }, px: 3, textAlign: 'center' }}>
+      {icon && (
+        <Box
+          aria-hidden
+          sx={{
+            width: 72,
+            height: 72,
+            mx: 'auto',
+            mb: 2,
+            borderRadius: '50%',
+            display: 'grid',
+            placeItems: 'center',
+            color: 'primary.main',
+            bgcolor: 'rgba(79,70,229,.08)',
+            '& svg': { fontSize: 34 },
+          }}
+        >
+          {icon}
+        </Box>
+      )}
       <Typography variant="h6" component="h2" gutterBottom>
         {title}
       </Typography>
       {description && (
-        <Typography color="text.secondary" sx={{ mb: action ? 3 : 0 }}>
+        <Typography color="text.secondary" sx={{ mb: action ? 3 : 0, maxWidth: 420, mx: 'auto' }}>
           {description}
         </Typography>
       )}
