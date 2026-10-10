@@ -17,4 +17,6 @@ export default tseslint.config(
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
+  // Test yardımcıları sayfa değildir; hızlı yenileme (fast refresh) kuralı burada anlamsız.
+  { files: ['src/test/**', '**/*.test.{ts,tsx}'], rules: { 'react-refresh/only-export-components': 'off' } },
 );

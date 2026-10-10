@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -8,5 +9,11 @@ export default defineConfig({
     // Geliştirmede /api istekleri yerel backend'e yönlendirilir; Docker'da bu işi nginx yapar.
     // Böylece frontend kodu her iki ortamda da aynı göreli adresi (/api) kullanır.
     proxy: { '/api': 'http://localhost:3000' },
+  },
+  test: {
+    // Testler tarayıcı yerine jsdom (Node içinde sahte DOM) üzerinde çalışır.
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    css: false,
   },
 });
