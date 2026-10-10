@@ -5,6 +5,7 @@ import { VehicleCreatePage } from '../features/fleet/pages/VehicleCreatePage';
 import { VehicleDetailPage } from '../features/fleet/pages/VehicleDetailPage';
 import { VehicleEditPage } from '../features/fleet/pages/VehicleEditPage';
 import { RoutePlanListPage } from '../features/routing/pages/RoutePlanListPage';
+import { RoutePlanEditorPage } from '../features/routing/pages/RoutePlanEditorPage';
 import { NotFoundPage } from '../shared/components/NotFoundPage';
 
 export function AppRoutes() {
@@ -17,6 +18,8 @@ export function AppRoutes() {
         <Route path="vehicles/:id" element={<VehicleDetailPage />} />
         <Route path="vehicles/:id/edit" element={<VehicleEditPage />} />
         <Route path="routes" element={<RoutePlanListPage />} />
+        <Route path="routes/new" element={<RoutePlanEditorPage />} />
+        <Route path="routes/:id" element={<RoutePlanEditorPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
