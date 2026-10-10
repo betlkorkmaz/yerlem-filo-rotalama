@@ -68,7 +68,11 @@ export function VehicleForm({ initialValues, submitLabel, onSubmit, onCancel }: 
     setSubmitting(true);
     try {
       await onSubmit(toVehicleInput(values));
+      // Başarılı kayıttan sonra kilit açılmaz: sayfa yönlenirken gelen ikinci tıklama yeni istek
+      // göndermesin. (Test ile yakalandı: hızlı cevapta çift tıklama iki kayıt isteği gönderiyordu.)
     } catch (err) {
+      submittingRef.current = false;
+      setSubmitting(false);
       const apiError = err instanceof ApiError ? err : null;
       if (apiError && Object.keys(apiError.fieldErrors).length > 0) {
         setErrors(apiError.fieldErrors);
@@ -76,9 +80,6 @@ export function VehicleForm({ initialValues, submitLabel, onSubmit, onCancel }: 
       } else {
         setFormError(apiError?.message ?? 'Kayıt sırasında beklenmeyen bir hata oluştu.');
       }
-    } finally {
-      submittingRef.current = false;
-      setSubmitting(false);
     }
   };
 

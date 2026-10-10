@@ -212,7 +212,10 @@ function RoutePlanEditor({ planId }: { planId: string | null }) {
       actions.markSaved(saved);
       notify(planId ? 'Rota planı güncellendi.' : 'Rota planı taslak olarak kaydedildi.');
       navigate('/routes', { replace: !planId });
+      // Başarıda kilit açılmaz: sayfa yönlenirken gelen ikinci tıklama yeni istek göndermesin.
     } catch (err) {
+      savingRef.current = false;
+      setSaving(false);
       const apiError = err instanceof ApiError ? err : null;
       // Araç bu ekran açıkken başka yerde pasif yapılmış: listeyi tazele ki seçim kutusu da güncellensin.
       // Girilen duraklar store'da durduğu için kaybolmaz.
@@ -222,9 +225,6 @@ function RoutePlanEditor({ planId }: { planId: string | null }) {
         focusField(apiError.fieldErrors);
       }
       setFormError(apiError?.message ?? 'Plan kaydedilemedi.');
-    } finally {
-      savingRef.current = false;
-      setSaving(false);
     }
   };
 
