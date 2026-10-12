@@ -5,26 +5,42 @@ hazırlandığı web uygulaması. 360 px telefon ekranından masaüstüne kadar 
 
 **Teknolojiler:** React · Material UI · Zustand · Node.js (Express + TypeScript) · PostgreSQL (Knex) · Docker
 
+[![CI](https://github.com/betlkorkmaz/yerlem-filo-rotalama/actions/workflows/ci.yml/badge.svg)](https://github.com/betlkorkmaz/yerlem-filo-rotalama/actions/workflows/ci.yml)
+
 ---
 
-## 📍 Geliştirme Durumu
+## 📸 Ekran Görüntüleri
 
-> Proje geliştirilmeye devam ediyor. Bu bölüm, ara kontrol için mevcut durumu gösterir.
-
-| Bölüm | Durum |
+| Rota planlama (masaüstü) | Araç listesi (masaüstü) |
 |---|---|
-| Analiz, veri modeli, ekran akışı ([docs/analiz.md](docs/analiz.md)) | ✅ Tamamlandı |
-| Docker ile tek komutla kurulum, migration ve seed | ✅ Tamamlandı |
-| Filo API'si (listeleme, arama, ekleme, düzenleme, aktif/pasif) | ✅ Tamamlandı |
-| Filo ekranları (liste, form, detay; mobil kart görünümü) | ✅ Tamamlandı |
-| Backend iş kuralı testleri (plaka normalizasyonu, doğrulama) | ✅ Tamamlandı |
-| Rota planı API'si ve OSRM entegrasyonu | ✅ Tamamlandı |
-| Rota ekranları (liste, oluşturma/düzenleme, harita) | ✅ Tamamlandı |
-| Backend entegrasyon testleri (gerçek PostgreSQL) ve rota servisi testleri | ✅ Tamamlandı |
-| Frontend kullanıcı akışı testi ve düzenleyici kuralları testleri | ✅ Tamamlandı |
-| OpenAPI (Swagger) dokümanı | ✅ Tamamlandı |
-| Açık / koyu tema | ✅ Tamamlandı |
-| Mobil ve masaüstü ekran görüntüleri | ⏳ Hazırlanıyor |
+| ![Rota düzenleme](docs/screenshots/masaustu-rota-duzenleme.png) | ![Araç listesi](docs/screenshots/masaustu-arac-listesi.png) |
+| **Rota planları** | **Form doğrulama** (alanla ilişkili hata mesajları) |
+| ![Rota listesi](docs/screenshots/masaustu-rota-listesi.png) | ![Form doğrulama](docs/screenshots/masaustu-arac-formu-dogrulama.png) |
+| **Açık tema** | **API dokümanı (Swagger)** |
+| ![Açık tema](docs/screenshots/masaustu-acik-tema.png) | ![Swagger](docs/screenshots/masaustu-swagger.png) |
+
+**Mobil (360 px)**
+
+| Araç listesi | Rota planları | Rota planlama | Pasif araç ve geçmiş planı | Açık tema |
+|---|---|---|---|---|
+| ![](docs/screenshots/mobil-arac-listesi.png) | ![](docs/screenshots/mobil-rota-listesi.png) | ![](docs/screenshots/mobil-rota-duzenleme.png) | ![](docs/screenshots/mobil-arac-detayi.png) | ![](docs/screenshots/mobil-acik-tema.png) |
+
+---
+
+## ✅ Kapsam
+
+| Gereksinim | Karşılığı |
+|---|---|
+| Filo: listeleme, arama, aktiflik filtresi, ekleme, düzenleme, aktif/pasif, detay | `/vehicles` ekranları; fiziksel silme yok, pasif yapma var |
+| Plaka benzersiz, yazım farkları tutarlı | Normalizasyon + `UNIQUE` kısıtı → `409 PLATE_TAKEN` |
+| Rotalama: başlangıç, bitiş, ara duraklar, yeniden sıralama | Durak listesi (↑ ↓), adres arama, haritaya dokunarak ekleme |
+| Yalnızca aktif araç; geçersiz koordinat kaydedilmez | Kayıt anında kilitli kontrol (`409 VEHICLE_INACTIVE`); `CHECK` kısıtları + doğrulama |
+| Harita, toplam mesafe ve süre | Leaflet + OpenStreetMap, OSRM |
+| Taslak kaydetme ve tekrar açma | `/routes`, `/routes/:id`; rota çizgisi plana kaydedilir |
+| Ortak veri | Araçlar tek tabloda; plan `vehicle_id` ile ilişkili; istemcide tek araç store'u |
+| Mobil (360 px), durum ekranları, erişilebilirlik | Kart görünümü, sabit eylem çubuğu, yükleniyor/boş/sonuç yok/hata ekranları, alanla ilişkili hata mesajları, görünür odak |
+| Docker, migration, seed | `docker compose up --build`; 5 araç + 2 plan |
+| Test, lint, API dokümanı | 41 test, ESLint, Swagger (`/api/docs`), GitHub Actions CI |
 
 ---
 
@@ -33,7 +49,7 @@ hazırlandığı web uygulaması. 360 px telefon ekranından masaüstüne kadar 
 Tek gereksinim **Docker** (Docker Desktop veya Docker Engine + Compose v2).
 
 ```bash
-git clone <repo-adresi>
+git clone https://github.com/betlkorkmaz/yerlem-filo-rotalama.git
 cd yerlem-filo-rotalama
 docker compose up --build
 ```
@@ -48,8 +64,9 @@ veya `.env` dosyası gerekmez.
 | http://localhost:8080/api/health | Servis ve veritabanı durumu |
 | http://localhost:3000/api | Backend (doğrudan erişim) |
 
-**Örnek veri:** 5 araç (biri pasif) ve 2 rota planı. Planlardan biri bilerek pasif araca bağlıdır;
-pasif aracın geçmiş planda görünmeye devam ettiği bu sayede hemen görülebilir.
+**Örnek veri:** 5 araç (biri pasif) ve 2 rota planı. İlk plan hesaplanmış rotasıyla gelir (haritada
+hemen görülür). İkinci plan bilerek pasif araca bağlı ve rotasızdır: pasif aracın geçmiş planda
+görünmeye devam ettiği ve rota servisi olmadan da taslak kaydedilebildiği bu sayede görülebilir.
 
 ```bash
 docker compose down        # durdur
